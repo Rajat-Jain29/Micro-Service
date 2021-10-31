@@ -1,11 +1,9 @@
 package com.example.demo.controller;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +19,7 @@ public class Controller {
 	HashMap<String, String> order = new HashMap<>();
 
 	@PostMapping("/newUser")
-	public String post(HttpServletRequest request, HttpServletResponse res) throws SQLException {
+	public String post(HttpServletRequest request) {
 
 		user = new HashMap<>();
 
@@ -40,7 +38,7 @@ public class Controller {
 	}
 
 	@PostMapping("/newOrder")
-	public String newOrder(HttpServletRequest request, HttpServletResponse res) throws SQLException {
+	public String newOrder(HttpServletRequest request) {
 
 		order = new HashMap<>();
 
@@ -59,37 +57,38 @@ public class Controller {
 	}
 
 	@GetMapping("/all_order/{user_id}")
-	public HashMap<String, String> allOrder(@PathVariable("user_id") String id) throws SQLException {
+	public HashMap<String, String> allOrder(@PathVariable("user_id") String id) {
 
 		HashMap<String, String> map = new HashMap<>();
-
 		if (user.get(id) == order.get(id)) {
-
 			for (Map.Entry val : order.entrySet()) {
-
 				map.put("" + val.getKey(), "" + val.getValue());
-
 			}
-
+		} else {
+			map.put("Invalid", "Not Found");
 		}
 		return map;
 
 	}
 
-	@PutMapping("/updateOrder/{item}")
-	public String update(HttpServletRequest request, HttpServletResponse res, @PathVariable("item") String item)
-			throws SQLException {
+	@PutMapping("/updateOrder/{user_id}")
+	public String update(HttpServletRequest request, @PathVariable("user_id") String id) {
 
-		String orderId = request.getParameter("orderId");
+		String quantity = request.getParameter("quantity");
+		if (user.get(id) == order.get(id)) {
+			order.put("quantity", quantity);
+		}
 
 		return "Record Updated";
 
 	}
 
-	@DeleteMapping("/deleteOrder")
-	public String delete(HttpServletRequest request, HttpServletResponse res) throws SQLException {
+	@DeleteMapping("/deleteOrder/{user_id}")
+	public String delete(HttpServletRequest request, @PathVariable("user_id") String id) {
 
-		String orderId = request.getParameter("orderId");
+		if (user.get(id) == order.get(id)) {
+			order.remove("quantity");
+		}
 
 		return "Record Deleted";
 
